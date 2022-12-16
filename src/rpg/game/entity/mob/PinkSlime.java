@@ -1,4 +1,4 @@
-package rpg.game.entity.enemy;
+package rpg.game.entity.mob;
 
 import rpg.game.Direction;
 import rpg.game.entity.Entity;
@@ -8,21 +8,17 @@ import rpg.game.main.GamePanel;
 import java.awt.*;
 import java.util.Random;
 
-public class PinkSlime extends Entity {
+public class PinkSlime extends Mob {
     Random random = new Random();
 
-    public PinkSlime(GamePanel gamePanel) {
-        super(gamePanel);
+    public PinkSlime(GamePanel gamePanel, int lvl) {
+        super(gamePanel, lvl);
         name = "Pink Slime";
-        lvl = 1;
-        type = EntityType.MONSTER;
         speed = 1;
-        hp = 20;
+        hp = 10;
         maxHp = 20;
-        exp = 50;
         setImages("src/resources/enemy/slime/");
         setSolidArea();
-
     }
 
     protected void setImages(String dir) {

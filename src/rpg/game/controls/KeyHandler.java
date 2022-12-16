@@ -9,7 +9,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean upPressed, downPressed, leftPressed, rightPressed, showDrawTime, fPressed, enterPressed, godMode = false;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, showDrawTime, fPressed, enterPressed,
+            spellKeyPressed, godMode = false;
     private GamePanel gamePanel;
 
     public KeyHandler(GamePanel gamePanel) {
@@ -59,6 +60,9 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_D) {
             rightPressed = true;
         }
+        if (code == KeyEvent.VK_Q) {
+            gamePanel.player.casting = true;
+        }
         if (code == KeyEvent.VK_T) {
             if (showDrawTime) {
                 showDrawTime = false;
@@ -72,6 +76,7 @@ public class KeyHandler implements KeyListener {
                 godMode = false;
             } else {
                 gamePanel.player.hp = gamePanel.player.maxHp;
+                gamePanel.player.mana = gamePanel.player.maxMana;
                 gamePanel.player.damage = 1000;
                 godMode = true;
             }
@@ -82,6 +87,10 @@ public class KeyHandler implements KeyListener {
         }
         if (code == KeyEvent.VK_F) {
             fPressed = true;
+        }
+        if (code == KeyEvent.VK_E) {
+            gamePanel.sound.playSound(5);
+            gamePanel.gameState = gamePanel.inventoryState;
         }
         if (code == KeyEvent.VK_C) {
             gamePanel.sound.playSound(5);
@@ -112,7 +121,17 @@ public class KeyHandler implements KeyListener {
     }
 
     public void characterState(int code) {
-        if (code == KeyEvent.VK_C || code == KeyEvent.VK_ESCAPE) {
+        if (code == KeyEvent.VK_ESCAPE || code == KeyEvent.VK_C) {
+            gamePanel.gameState = gamePanel.playState;
+        }
+        if (code == KeyEvent.VK_E) {
+            gamePanel.player.exp = gamePanel.player.nextLvlExp;
+            gamePanel.player.checkLevel();
+        }
+    }
+
+    public void inventoryState(int code) {
+        if (code == KeyEvent.VK_E || code == KeyEvent.VK_ESCAPE) {
             gamePanel.sound.playSound(5);
             gamePanel.gameState = gamePanel.playState;
         }
@@ -203,15 +222,11 @@ public class KeyHandler implements KeyListener {
             gamePanel.gameState = gamePanel.playState;
             gamePanel.ui.commandNum = 0;
         }
-        int maxCommandNum = 0;
-        switch (gamePanel.ui.subState) {
-            case 0:
-                maxCommandNum = 5;
-                break;
-            case 3:
-                maxCommandNum = 1;
-                break;
-        }
+        int maxCommandNum = switch (gamePanel.ui.subState) {
+            case 0 -> 5;
+            case 3 -> 1;
+            default -> 0;
+        };
 
         if (code == KeyEvent.VK_W) {
             gamePanel.sound.playSound(5);
@@ -321,6 +336,9 @@ public class KeyHandler implements KeyListener {
             dialogueState(code);
         }
         //CHARACTER
+        else if (gamePanel.gameState == gamePanel.inventoryState) {
+            inventoryState(code);
+        }
         else if (gamePanel.gameState == gamePanel.characterState) {
             characterState(code);
         }
@@ -346,6 +364,15 @@ public class KeyHandler implements KeyListener {
         }
         if (code == KeyEvent.VK_D) {
             rightPressed = false;
+        }
+        if (code == KeyEvent.VK_Q) {
+            spellKeyPressed = false;
+        }
+        if (code == KeyEvent.VK_ENTER) {
+            enterPressed = false;
+        }
+        if (code == KeyEvent.VK_F) {
+            fPressed = false;
         }
     }
 }

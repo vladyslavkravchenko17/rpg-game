@@ -1,12 +1,15 @@
 package rpg.game.entity;
 
 import rpg.game.Direction;
+import rpg.game.entity.magic.projectile.Fireball;
 import rpg.game.item.armor.bandit_set.BanditBoots;
 import rpg.game.item.armor.bandit_set.BanditBreastplate;
 import rpg.game.controls.KeyHandler;
+import rpg.game.item.armor.necklace.HealthNecklace;
+import rpg.game.item.armor.ring.RingOfStrength;
 import rpg.game.item.potion.LowHealthPotion;
 import rpg.game.main.GamePanel;
-import rpg.game.weapon.Hand;
+import rpg.game.item.weapon.Hand;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,7 +20,6 @@ public class Player extends Entity {
     public final int screenY;
     public BufferedImage hUp0, hUp1, hUp2, hDown0, hDown1, hDown2, hLeft0, hLeft1, hLeft2, hRight0, hRight1, hRight2;
     public BufferedImage eUp0, eUp1, eUp2, eDown0, eDown1, eDown2, eLeft0, eLeft1, eLeft2, eRight0, eRight1, eRight2;
-
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         super(gamePanel);
@@ -40,20 +42,27 @@ public class Player extends Entity {
 
         lvl = 1;
         exp = 0;
-        nextLvlExp = 100;
-        maxHp = 100;
-        hp = 100;
-        speed = 5;
-        strength = 1;
-        vitality = 1;
+        nextLvlExp = 5;
+        agility = 5;
+        body = 1;
+        strength = 9;
+        vitality = 20;
+        maxHp = vitality;
+        hp = maxHp;
+        intelligence = 20;
+        maxMana = intelligence;
+        mana = maxMana;
         money = 15;
 
         weapon = new Hand(gamePanel);
+        magicSpell = new Fireball(gamePanel);
         inventory.add(new BanditBreastplate());
         inventory.add(new BanditBreastplate());
         inventory.add(new BanditBoots());
         inventory.add(new LowHealthPotion());
         inventory.add(new LowHealthPotion());
+        inventory.add(new RingOfStrength());
+        inventory.add(new HealthNecklace());
 
         calculateStats();
     }
@@ -126,6 +135,14 @@ public class Player extends Entity {
         } else if (!attacking) {
             spriteNumber = 0;
         }
+
+        if (casting && !magicSpell.alive) {
+            casting = false;
+            magicSpell.set(worldX, worldY, direction, this);
+
+            gamePanel.projectiles.add(magicSpell);
+        }
+
         if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > 60) {
@@ -136,6 +153,35 @@ public class Player extends Entity {
 
         if (hp <= 0) {
             gamePanel.gameState = gamePanel.gameOverState;
+        }
+        checkLevel();
+    }
+
+    public void checkLevel() {
+        if (exp >= nextLvlExp) {
+            lvl++;
+            int i = 5;
+            if (lvl <= 10) {
+                i += 5;
+                nextLvlExp += i * lvl;
+            }
+            else if (lvl <= 20) {
+                i += 4;
+                nextLvlExp += i * lvl;
+            }
+            else if (lvl <= 40) {
+                i += 3;
+                nextLvlExp += i * lvl;
+            }
+            else if (lvl <= 60) {
+                i += 2;
+                nextLvlExp += i * lvl;
+            }
+            else {
+                i += 1;
+                nextLvlExp += i * lvl;
+            }
+
         }
     }
 
@@ -269,6 +315,12 @@ public class Player extends Entity {
         }
         if (boots != null) {
             g2D.drawImage(bootsImage, screenX, screenY, null);
+        }
+        if (gloves != null) {
+            g2D.drawImage(glovesImage, screenX, screenY, null);
+        }
+        if (helmet != null) {
+            g2D.drawImage(helmetImage, screenX, screenY, null);
         }
         g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
     }

@@ -1,6 +1,7 @@
 package rpg.game.item.armor;
 
 import rpg.game.item.Item;
+import rpg.game.item.ItemType;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -13,6 +14,9 @@ public class Armor extends Item {
     public ArmorType armorType;
     public boolean equipped;
 
+    public Armor() {
+        itemType = ItemType.ARMOR;
+    }
 
     protected void setImages(String dir) {
         up0 = setImage("u0", dir);

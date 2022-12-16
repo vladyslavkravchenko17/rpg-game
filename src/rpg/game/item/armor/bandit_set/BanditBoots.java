@@ -7,10 +7,9 @@ public class BanditBoots extends Boots {
     public BanditBoots() {
         setImages("src/resources/armor/bandit_armor/boots/");
         protection = 1;
-        speed = 1;
+        agility = 1;
         name = "Bandit Boots";
         description = "Light bandit boots";
-        itemType = ItemType.ARMOR;
         equipped = false;
     }
 }

@@ -1,7 +1,7 @@
 package rpg.game.main;
 
 import rpg.game.entity.Entity;
-import rpg.game.entity.enemy.PinkSlime;
+import rpg.game.entity.mob.PinkSlime;
 import rpg.game.entity.npc.Lizard;
 import rpg.game.entity.object.Chest;
 
@@ -25,13 +25,13 @@ public class AssetSetter {
     }
 
     public void setMonsters() {
-        setMonster(new PinkSlime(gamePanel), 40, 40);
-        setMonster(new PinkSlime(gamePanel), 37, 37);
-        setMonster(new PinkSlime(gamePanel), 37, 38);
-        setMonster(new PinkSlime(gamePanel), 37, 39);
-        setMonster(new PinkSlime(gamePanel), 37, 40);
-        setMonster(new PinkSlime(gamePanel), 38, 37);
-        setMonster(new PinkSlime(gamePanel), 38, 40);
+        setMonster(new PinkSlime(gamePanel, 1), 40, 40);
+        setMonster(new PinkSlime(gamePanel, 1), 37, 37);
+        setMonster(new PinkSlime(gamePanel, 1), 37, 38);
+        setMonster(new PinkSlime(gamePanel, 1), 37, 39);
+        setMonster(new PinkSlime(gamePanel, 1), 37, 40);
+        setMonster(new PinkSlime(gamePanel, 1), 38, 37);
+        setMonster(new PinkSlime(gamePanel, 1), 38, 40);
 
 
     }

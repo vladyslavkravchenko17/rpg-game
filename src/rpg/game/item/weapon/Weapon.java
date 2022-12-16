@@ -1,4 +1,4 @@
-package rpg.game.weapon;
+package rpg.game.item.weapon;
 
 import rpg.game.Direction;
 import rpg.game.main.GamePanel;
@@ -14,6 +14,8 @@ public class Weapon {
     public Rectangle attackArea = new Rectangle();
     public int damage = 5;
     public Direction attackDirection;
+    public String name;
+    public String description;
 
     public BufferedImage aUp0, aUp1, aUp2, aDown0, aDown1, aDown2, aLeft0, aLeft1, aLeft2, aRight0, aRight1, aRight2;
 
@@ -23,11 +25,10 @@ public class Weapon {
 
 
     public void setDirectionByMouse() {
-        int screenMidX = gamePanel.screenWidth / 2;
-        int screenMidY = gamePanel.screenHeight / 2;
-        int mouseX = gamePanel.mouseHandler.mouseX;
-        int mouseY = gamePanel.mouseHandler.mouseY;
-
+//        int screenMidX = gamePanel.screenWidth / 2;
+//        int screenMidY = gamePanel.screenHeight / 2;
+//        int mouseX = gamePanel.mouseHandler.mouseX;
+//        int mouseY = gamePanel.mouseHandler.mouseY;
     }
 
     protected void setAttackImages(String dir) {

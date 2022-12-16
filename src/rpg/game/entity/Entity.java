@@ -1,10 +1,11 @@
 package rpg.game.entity;
 
 import rpg.game.Direction;
+import rpg.game.entity.magic.Magic;
 import rpg.game.item.Item;
 import rpg.game.item.armor.*;
 import rpg.game.main.GamePanel;
-import rpg.game.weapon.Weapon;
+import rpg.game.item.weapon.Weapon;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,17 +19,18 @@ public class Entity {
     public EntityType type;
     public BufferedImage up0, up1, up2, down0, down1, down2, left0, left1, left2, right0, right1, right2;
     public BufferedImage aUp0, aUp1, aUp2, aDown0, aDown1, aDown2, aLeft0, aLeft1, aLeft2, aRight0, aRight1, aRight2;
-    public BufferedImage image, hairImage, eyesImage, breastplateImage, helmetImage, bootsImage;
-    int spriteCounter = 0;
+    public BufferedImage image, hairImage, eyesImage, breastplateImage, helmetImage, glovesImage, bootsImage;
     public Rectangle solidArea;
 
     public int worldX, worldY;
     public Direction direction = Direction.DOWN;
     protected int dialogueIndex = 0;
-    int spriteNumber = 0;
+    public int spriteNumber = 0;
+    public int spriteCounter = 0;
     public boolean collisionOn = false;
     public boolean invincible = false;
     public boolean attacking = false;
+    public boolean casting = false;
     public boolean hpBarOn = false;
     public int hpBarCounter = 0;
 
@@ -41,11 +43,14 @@ public class Entity {
     public BufferedImage weaponImage;
     public String name;
     public  boolean collision = false;
+    public boolean alive = true;
 
     //EQUIPMENT
-    public ArrayList<Item> inventory = new ArrayList<>();
+//    public ArrayList<Item> inventory = new ArrayList<>();
+    public Item[] inventory = new Item[20];
     public final int maxInventorySize = 20;
     public Weapon weapon;
+    public Magic magicSpell;
     public Helmet helmet;
     public Breastplate breastplate;
     public Boots boots;
@@ -57,15 +62,20 @@ public class Entity {
     public int lvl;
     public int exp;
     public int nextLvlExp;
+    public int agility;
     public int speed;
     public int strength;
     public int damage;
-    public int vitality;
+    public int body;
     public int defense;
-    public int money;
-    int animationSpeed = 10;
     public int maxHp;
     public int hp;
+    public int vitality;
+    public int mana;
+    public int maxMana;
+    public int intelligence;
+    public int money;
+    int animationSpeed = 10;
 
     public Entity(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -257,8 +267,10 @@ public class Entity {
     }
 
     public void calculateStats() {
-        defense = vitality;
+        speed = agility;
+        defense = body;
         damage = strength;
+        maxHp = vitality;
         if (weapon != null) {
             damage += weapon.damage;
         }
@@ -270,8 +282,15 @@ public class Entity {
         }
         if (boots != null) {
             defense += boots.protection;
+            speed += boots.agility;
         }
-
-
+        if (necklace != null) {
+            damage += necklace.strength;
+            maxHp += necklace.vitality;
+        }
+        if (ring != null) {
+            damage += ring.strength;
+            maxHp += ring.vitality;
+        }
     }
 }

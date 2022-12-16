@@ -1,5 +1,6 @@
 package rpg.game.UI;
 
+import rpg.game.item.Item;
 import rpg.game.main.GamePanel;
 
 import java.awt.*;
@@ -17,8 +18,12 @@ public class UI {
     public Font pixelFont;
     public int slotCol;
     public int slotRow;
+    public InventorySlotType inventorySlotType;
     private final BasicStroke stroke = new BasicStroke(3);
     public int subState = 0;
+    public boolean hasActiveSlot;
+    public boolean dragItem;
+    public Item draggingItem;
 
     public UI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -52,9 +57,10 @@ public class UI {
         } else if (gamePanel.gameState == gamePanel.dialogueState) {
             drawHp();
             drawDialogueScreen();
-        } else if (gamePanel.gameState == gamePanel.characterState) {
-//            drawCharacterWindow();
+        } else if (gamePanel.gameState == gamePanel.inventoryState) {
             drawInventory();
+        } else if (gamePanel.gameState == gamePanel.characterState) {
+            drawCharacterWindow();
         } else if (gamePanel.gameState == gamePanel.optionsState) {
             drawOptionsScreen();
         } else if (gamePanel.gameState == gamePanel.gameOverState) {
@@ -78,6 +84,16 @@ public class UI {
         width = (int) Math.ceil(width * ((double) gamePanel.player.hp / gamePanel.player.maxHp));
         g2D.fillRect(x + 3, y + 3, width - 6, height - 6);
 
+        width = gamePanel.screenWidth / 4;
+        y += gamePanel.tileSize / 3 * 2;
+        g2D.setColor(Color.WHITE);
+        g2D.fillRect(x, y, width, height);
+        g2D.setColor(Color.BLACK);
+        g2D.fillRect(x + 3, y + 3, width - 6, height - 6);
+        g2D.setColor(new Color(50, 0, 250));
+
+        width = (int) Math.ceil(width * ((double) gamePanel.player.mana / gamePanel.player.maxMana));
+        g2D.fillRect(x + 3, y + 3, width - 6, height - 6);
     }
 
     private void drawTitleScreen() {
@@ -330,12 +346,13 @@ public class UI {
             g2D.fillRect(textX, textY, gamePanel.tileSize / 2, gamePanel.tileSize / 2);
         }
 
-
+        //MUSIC
         textY += gamePanel.tileSize;
         g2D.drawRect(textX, textY, 120, gamePanel.tileSize / 2);
         int volumeWidth = 24 * gamePanel.music.volumeScale;
         g2D.fillRect(textX, textY, volumeWidth, 24);
 
+        //SOUND
         textY += gamePanel.tileSize;
         g2D.drawRect(textX, textY, 120, gamePanel.tileSize / 2);
         volumeWidth = 24 * gamePanel.sound.volumeScale;
@@ -391,6 +408,7 @@ public class UI {
                 subState = 0;
                 gamePanel.gameState = gamePanel.titleState;
                 gamePanel.keyHandler.enterPressed = false;
+                gamePanel.music.stopMusic();
             }
         }
 
@@ -409,6 +427,9 @@ public class UI {
     }
 
     private void drawInventory() {
+        gamePanel.mouseHandler.checkMousePosition();
+        hasActiveSlot = false;
+
         g2D.setColor(new Color(0, 0, 0, 245));
         g2D.fillRect(0, 0, gamePanel.screenWidth, gamePanel.screenHeight);
 
@@ -424,11 +445,17 @@ public class UI {
         if (gamePanel.player.helmet != null) {
             g2D.drawImage(gamePanel.player.helmet.icon, x, y, armorSlotSize, armorSlotSize, null);
         }
+        if (isActiveSlot(x, y, armorSlotSize)) {
+            inventorySlotType = InventorySlotType.HELMET;
+        }
 
         y += armorSlotSize + 10;
         drawSlot(x, y, armorSlotSize);
         if (gamePanel.player.breastplate != null) {
             g2D.drawImage(gamePanel.player.breastplate.icon, x, y, armorSlotSize, armorSlotSize, null);
+        }
+        if (isActiveSlot(x, y, armorSlotSize)) {
+            inventorySlotType = InventorySlotType.BREASTPLATE;
         }
 
         y += armorSlotSize + 10;
@@ -436,11 +463,17 @@ public class UI {
         if (gamePanel.player.gloves != null) {
             g2D.drawImage(gamePanel.player.gloves.icon, x, y, armorSlotSize, armorSlotSize, null);
         }
+        if (isActiveSlot(x, y, armorSlotSize)) {
+            inventorySlotType = InventorySlotType.GLOVES;
+        }
 
         y += armorSlotSize + 10;
         drawSlot(x, y, armorSlotSize);
         if (gamePanel.player.boots != null) {
             g2D.drawImage(gamePanel.player.boots.icon, x, y, armorSlotSize, armorSlotSize, null);
+        }
+        if (isActiveSlot(x, y, armorSlotSize)) {
+            inventorySlotType = InventorySlotType.BOOTS;
         }
 
 
@@ -448,6 +481,149 @@ public class UI {
         x += gamePanel.tileSize;
         y = startY + 16;
 
+        drawPlayer(x, y);
+
+
+        //ARMOR SLOTS
+
+        x += gamePanel.tileSize * 5.5;
+        y = startY;
+
+        drawSlot(x, y, armorSlotSize);
+        if (isActiveSlot(x, y, armorSlotSize)) {
+            inventorySlotType = InventorySlotType.WEAPON;
+        }
+
+        y += armorSlotSize + 10;
+        drawSlot(x, y, armorSlotSize);
+        if (gamePanel.player.necklace != null) {
+            g2D.drawImage(gamePanel.player.necklace.icon, x, y, armorSlotSize, armorSlotSize, null);
+        }
+        if (isActiveSlot(x, y, armorSlotSize)) {
+            inventorySlotType = InventorySlotType.NECKLACE;
+        }
+
+        y += armorSlotSize + 10;
+        drawSlot(x, y, armorSlotSize);
+        if (gamePanel.player.ring != null) {
+            g2D.drawImage(gamePanel.player.ring.icon, x, y, armorSlotSize, armorSlotSize, null);
+        }
+        if (isActiveSlot(x, y, armorSlotSize)) {
+            inventorySlotType = InventorySlotType.RING;
+        }
+        //INVENTORY SLOTS
+
+        x += gamePanel.tileSize * 2.5;
+        y = startY;
+        int invXStart = x;
+        int invYStart = y;
+        int col = 0;
+
+
+        for (int i = 0; i < gamePanel.player.maxInventorySize; i++) {
+            drawSlot(x, y, slotSize);
+            if (isActiveSlot(x, y, slotSize)) {
+                inventorySlotType = InventorySlotType.INVENTORY;
+                slotCol = (x - invXStart) / (slotSize + 10);
+                slotRow = (y - invYStart) / (slotSize + 10);
+            }
+            if (i < gamePanel.player.inventory.size()) {
+                Item item = gamePanel.player.inventory.get(i);
+                if (item != null) {
+                    g2D.drawImage(item.icon, x, y, slotSize, slotSize, null);
+                }
+            }
+            x += slotSize + 10;
+            if (col == 4) {
+                col = 0;
+                x = invXStart;
+                y += slotSize + 10;
+            } else {
+                col++;
+            }
+        }
+
+        //ITEM DESCRIPTION
+        x = invXStart;
+        y += 16;
+        drawInventoryDescription(x, y);
+
+
+        //DRAGGING ITE<=M
+        if (dragItem) {
+            drawDragItem(slotSize);
+        }
+    }
+
+    private void drawDragItem(int slotSize) {
+        gamePanel.mouseHandler.checkMousePosition();
+        int x = (int) (gamePanel.mouseHandler.mousePositionX - slotSize / 2);
+        int y = (int) (gamePanel.mouseHandler.mousePositionY - slotSize / 2);
+        g2D.drawImage(draggingItem.icon, x, y, slotSize, slotSize, null);
+
+    }
+
+    private void drawInventoryDescription(int x, int y) {
+        g2D.setColor(new Color(30, 30, 30));
+        g2D.fillRoundRect(x, y, gamePanel.tileSize * 8 + 16, gamePanel.tileSize * 3, 10, 10);
+        g2D.setStroke(stroke);
+        g2D.setColor(Color.GRAY);
+        g2D.drawRoundRect(x, y, gamePanel.tileSize * 8 + 16, gamePanel.tileSize * 3, 10, 10);
+
+        String itemName = "";
+        String itemDescription = "";
+
+        if (dragItem) {
+            itemName = draggingItem.name;
+            itemDescription = draggingItem.description;
+        }
+        else if (hasActiveSlot) {
+            if (getItemIndexOfSlot() < gamePanel.player.inventory.size() && inventorySlotType == InventorySlotType.INVENTORY) {
+                itemName = gamePanel.player.inventory.get(getItemIndexOfSlot()).name;
+                itemDescription = gamePanel.player.inventory.get(getItemIndexOfSlot()).description;
+            } else if (inventorySlotType == InventorySlotType.HELMET && gamePanel.player.helmet != null) {
+                itemName = gamePanel.player.helmet.name;
+                itemDescription = gamePanel.player.helmet.description;
+            } else if (inventorySlotType == InventorySlotType.BREASTPLATE && gamePanel.player.breastplate != null) {
+                itemName = gamePanel.player.breastplate.name;
+                itemDescription = gamePanel.player.breastplate.description;
+            } else if (inventorySlotType == InventorySlotType.GLOVES && gamePanel.player.gloves != null) {
+                itemName = gamePanel.player.gloves.name;
+                itemDescription = gamePanel.player.gloves.description;
+            } else if (inventorySlotType == InventorySlotType.BOOTS && gamePanel.player.boots != null) {
+                itemName = gamePanel.player.boots.name;
+                itemDescription = gamePanel.player.boots.description;
+            } else if (inventorySlotType == InventorySlotType.WEAPON && gamePanel.player.weapon != null) {
+                itemName = gamePanel.player.weapon.name;
+                itemDescription = gamePanel.player.weapon.description;
+            } else if (inventorySlotType == InventorySlotType.NECKLACE && gamePanel.player.necklace != null) {
+                itemName = gamePanel.player.necklace.name;
+                itemDescription = gamePanel.player.necklace.description;
+            } else if (inventorySlotType == InventorySlotType.RING && gamePanel.player.ring != null) {
+                itemName = gamePanel.player.ring.name;
+                itemDescription = gamePanel.player.ring.description;
+            }
+        }
+
+        x += 12;
+        y += gamePanel.tileSize;
+        g2D.setColor(Color.WHITE);
+        g2D.setFont(g2D.getFont().deriveFont(32f));
+        g2D.drawString(itemName, x, y);
+        g2D.setFont(g2D.getFont().deriveFont(24f));
+        y += gamePanel.tileSize / 2;
+        g2D.drawString(itemDescription, x, y);
+    }
+
+    private boolean isActiveSlot(int x, int y, int slotSize) {
+        if (gamePanel.mouseHandler.mousePositionX >= x && gamePanel.mouseHandler.mousePositionX <= x + slotSize
+                && gamePanel.mouseHandler.mousePositionY >= y && gamePanel.mouseHandler.mousePositionY <= y + slotSize) {
+            hasActiveSlot = true;
+            return true;
+        } else return false;
+    }
+
+    private void drawPlayer(int x, int y) {
         g2D.drawImage(gamePanel.player.down0, x, y, gamePanel.tileSize * 6, gamePanel.tileSize * 6, null);
         g2D.drawImage(gamePanel.player.eDown0, x, y, gamePanel.tileSize * 6, gamePanel.tileSize * 6, null);
         g2D.drawImage(gamePanel.player.hDown0, x, y, gamePanel.tileSize * 6, gamePanel.tileSize * 6, null);
@@ -463,130 +639,39 @@ public class UI {
         if (gamePanel.player.boots != null) {
             g2D.drawImage(gamePanel.player.boots.down0, x, y, gamePanel.tileSize * 6, gamePanel.tileSize * 6, null);
         }
-
-        //ARMOR SLOTS
-
-        x += gamePanel.tileSize * 5.5;
-        y = startY;
-
-        drawSlot(x, y, armorSlotSize);
-
-        y += armorSlotSize + 10;
-        drawSlot(x, y, armorSlotSize);
-
-        y += armorSlotSize + 10;
-        drawSlot(x, y, armorSlotSize);
-
-        //INVENTORY SLOTS
-
-        x += gamePanel.tileSize * 2.5;
-        y = startY;
-        int invXStart = x;
-        int col = 0;
-
-        for (int i = 0; i < gamePanel.player.maxInventorySize; i++) {
-            drawSlot(x, y, slotSize);
-            if (i < gamePanel.player.inventory.size()) {
-                g2D.drawImage(gamePanel.player.inventory.get(i).icon, x, y, slotSize, slotSize, null);
-            }
-            x += slotSize + 10;
-            if (col == 4) {
-                col = 0;
-                x = invXStart;
-                y += slotSize + 10;
-            } else {
-                col++;
-            }
-        }
-        int cursorX = invXStart + (slotSize + 10) * slotCol;
-        int cursorY = startY + (slotSize + 10) * slotRow;
-        g2D.setColor(Color.WHITE);
-        g2D.setStroke(stroke);
-        g2D.drawRoundRect(cursorX, cursorY, slotSize, slotSize, 10, 10);
-
-        //ITEM DESCRIPTION
-        x = invXStart;
-        y += 16;
-        g2D.setColor(new Color(30, 30, 30));
-        g2D.fillRoundRect(x, y, gamePanel.tileSize * 8 + 16, gamePanel.tileSize * 3, 10, 10);
-        g2D.setStroke(stroke);
-        g2D.setColor(Color.GRAY);
-        g2D.drawRoundRect(x, y, gamePanel.tileSize * 8 + 16, gamePanel.tileSize * 3, 10, 10);
-
-        if (getItemIndexOfSlot() < gamePanel.player.inventory.size()) {
-            x += 12;
-            y += gamePanel.tileSize;
-            g2D.setColor(Color.WHITE);
-            g2D.setFont(g2D.getFont().deriveFont(32f));
-            g2D.drawString(gamePanel.player.inventory.get(getItemIndexOfSlot()).name, x, y);
-            g2D.setFont(g2D.getFont().deriveFont(24f));
-            y += gamePanel.tileSize / 2;
-            g2D.drawString(gamePanel.player.inventory.get(getItemIndexOfSlot()).description, x, y);
-        }
-
-
     }
 
     private void drawSlot(int x, int y, int slotSize) {
-        g2D.setColor(new Color(30, 30, 30));
-        g2D.fillRoundRect(x, y, slotSize, slotSize, 10, 10);
-        g2D.setStroke(stroke);
         g2D.setColor(Color.GRAY);
         g2D.drawRoundRect(x, y, slotSize, slotSize, 10, 10);
+        if (gamePanel.mouseHandler.mousePositionX >= x && gamePanel.mouseHandler.mousePositionX <= x + slotSize
+                && gamePanel.mouseHandler.mousePositionY >= y && gamePanel.mouseHandler.mousePositionY <= y + slotSize) {
+            drawCursor(x, y, slotSize);
+            g2D.setColor(new Color(100, 10, 10));
+        } else {
+            g2D.setColor(new Color(30, 30, 30));
+        }
+        g2D.fillRoundRect(x, y, slotSize, slotSize, 10, 10);
+        g2D.setStroke(stroke);
     }
 
-//    private void drawInventory() {
-//        int frameX = gamePanel.tileSize * 9;
-//        int frameY = gamePanel.tileSize;
-//        int frameWidth = gamePanel.tileSize * 6;
-//        int frameHeight = gamePanel. tileSize * 5;
-//        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
-//
-//        final int slotXStart = frameX + 20;
-//        final int slotYStart = frameY + 20;
-//        int slotX = slotXStart;
-//        int slotY = slotYStart;
-//        final int slotSize = gamePanel.tileSize + 3;
-//
-//        int cursorX = slotXStart + slotSize * slotCol;
-//        int cursorY = slotYStart + slotSize * slotRow;
-//        int cursorWidth = gamePanel.tileSize;
-//        int cursorHeight = gamePanel.tileSize;
-//
-//        for (int i = 0; i < gamePanel.player.maxInventorySize; i++) {
-//            if (i == gamePanel.player.inventory.size()) {
-//                break;
-//            }
-//            int col = 0;
-//            g2D.drawImage(gamePanel.player.inventory.get(i).icon, slotX, slotY, gamePanel.tileSize, gamePanel.tileSize, null);
-//            slotX += slotSize;
-//            if (col == 4) {
-//                col = 0;
-//                slotX = slotXStart;
-//                slotY += slotSize;
-//            }
-//        }
-//
-//        g2D.setColor(Color.WHITE);
-//        g2D.setStroke(stroke);
-//        g2D.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
-//
-//
-//        int dFrameX = frameX;
-//        int dFrameY = frameY + frameHeight;
-//        int dFrameWidth = frameWidth;
-//        int dFrameHeight = gamePanel.tileSize * 3;
-//        drawSubWindow(dFrameX, dFrameY, dFrameWidth, dFrameHeight);
-//
-//        int textX = dFrameX + 20;
-//        int textY = dFrameY + gamePanel.tileSize;
-//        g2D.setFont(g2D.getFont().deriveFont(24f));
-//
-//        int itemIndex = getItemIndexOfSlot();
-//        if (itemIndex < gamePanel.player.inventory.size()){
-//            g2D.drawString(gamePanel.player.inventory.get(itemIndex).description, textX, textY);
-//        }
-//    }
+    public void drawSystemParameters(long timeLast) {
+        g2D.setColor(Color.white);
+        g2D.setFont(g2D.getFont().deriveFont(32f));
+        int y = 400;
+        g2D.drawString("Draw time: " + (double)timeLast / 1_000_000_000.0 + " sec", 10, y);
+        y += 30;
+        g2D.drawString("x: " + gamePanel.player.worldX / gamePanel.tileSize, 10, y);
+        y += 30;
+        g2D.drawString("y: " + gamePanel.player.worldY / gamePanel.tileSize, 10, y);
+        y += 30;
+    }
+
+    private void drawCursor(int x, int y, int slotSize) {
+        g2D.setColor(Color.WHITE);
+        g2D.setStroke(stroke);
+        g2D.drawRoundRect(x, y, slotSize, slotSize, 10, 10);
+    }
 
     public int getItemIndexOfSlot() {
         return slotCol + (slotRow * 5);

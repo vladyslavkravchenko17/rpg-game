@@ -33,8 +33,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public int screenWidth2 = screenWidth;
     public int screenHeight2 = screenHeight;
+    public double screenRelationX = 1, screenRelationY = 1;
     BufferedImage tempScreen;
-    Graphics2D g2D;
+    public Graphics2D g2D;
     public boolean fullscreenOn = true;
 
 
@@ -47,9 +48,10 @@ public class GamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int pauseState = 2;
     public final int dialogueState = 3;
-    public final int characterState = 4;
-    public final int optionsState = 5;
-    public final int gameOverState = 6;
+    public final int inventoryState = 4;
+    public final int characterState = 5;
+    public final int optionsState = 6;
+    public final int gameOverState = 7;
 
 
     //SYSTEM
@@ -70,6 +72,7 @@ public class GamePanel extends JPanel implements Runnable {
     public ArrayList<Entity> npc = new ArrayList<>();
     public ArrayList<Entity> monsters = new ArrayList<>();
     public ArrayList<Entity> entityList = new ArrayList<>();
+    public ArrayList<Entity> projectiles = new ArrayList<>();
 
 
     public GamePanel() {
@@ -103,7 +106,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        double drawInterval = 1000000000 / FPS;
+        double drawInterval = (double) 1000000000 / FPS;
         double nextDrawTime = System.nanoTime() + drawInterval;
 
         while (gameThread != null) {
@@ -135,10 +138,16 @@ public class GamePanel extends JPanel implements Runnable {
             for (Entity monster : monsters) {
                 monster.update();
             }
+            for (int i = 0; i < projectiles.size(); i++) {
+                projectiles.get(i).update();
+                if (!projectiles.get(i).alive) {
+                    projectiles.remove(i);
+                    i--;
+                }
+            }
         }
-        if (gameState == pauseState) {
+        mouseHandler.update();
 
-        }
     }
 
     public void retry() {
@@ -153,6 +162,7 @@ public class GamePanel extends JPanel implements Runnable {
         player.setDefaultValues();
         assetSetter.setObjects();
         assetSetter.setMonsters();
+        music.stopMusic();
     }
 
     public void setFullScreen() {
@@ -162,6 +172,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         screenWidth2 = Main.window.getWidth();
         screenHeight2 = Main.window.getHeight();
+        screenRelationX = (double) screenWidth / screenWidth2;
+        screenRelationY = (double) screenHeight / screenHeight2;
     }
 
     public void drawToScreen() {
@@ -182,6 +194,7 @@ public class GamePanel extends JPanel implements Runnable {
             entityList.addAll(npc);
             entityList.addAll(objects);
             entityList.addAll(monsters);
+            entityList.addAll(projectiles);
             entityList.sort(Comparator.comparingInt(o -> o.worldY));
 
             for (Entity entity : entityList) {
@@ -190,17 +203,12 @@ public class GamePanel extends JPanel implements Runnable {
 
             entityList.clear();
 
-
             ui.draw(g2D);
 
             long drawEnd = System.nanoTime();
             long timeLast = drawEnd - drawStart;
             if (keyHandler.showDrawTime) {
-                g2D.setColor(Color.white);
-                g2D.setFont(g2D.getFont().deriveFont(32f));
-                g2D.drawString("Draw time: " + timeLast, 10, 400);
-                g2D.drawString("x: " + player.worldX / tileSize, 10, 430);
-                g2D.drawString("y: " + player.worldY / tileSize, 10, 460);
+                ui.drawSystemParameters(timeLast);
             }
             if (keyHandler.godMode) {
                 g2D.setColor(Color.white);

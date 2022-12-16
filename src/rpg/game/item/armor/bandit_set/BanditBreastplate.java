@@ -9,7 +9,6 @@ public class BanditBreastplate extends Breastplate {
         protection = 2;
         name = "Bandit Breastplate";
         description = "Light bandit armor";
-        itemType = ItemType.ARMOR;
         equipped = false;
     }
 }
