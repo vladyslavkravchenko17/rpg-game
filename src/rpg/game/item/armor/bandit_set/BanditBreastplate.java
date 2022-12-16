@@ -6,7 +6,7 @@ import rpg.game.item.armor.Breastplate;
 public class BanditBreastplate extends Breastplate {
     public BanditBreastplate() {
         setImages("src/resources/armor/bandit_armor/breastplate/");
-        protection = 2;
+        protection = 4;
         name = "Bandit Breastplate";
         description = "Light bandit armor";
         equipped = false;

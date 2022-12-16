@@ -1,5 +1,7 @@
 package rpg.game.main;
 
+import rpg.game.item.Item;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

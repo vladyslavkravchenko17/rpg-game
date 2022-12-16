@@ -4,6 +4,7 @@ import rpg.game.Direction;
 import rpg.game.entity.magic.Magic;
 import rpg.game.item.Item;
 import rpg.game.item.armor.*;
+import rpg.game.item.weapon.Hand;
 import rpg.game.main.GamePanel;
 import rpg.game.item.weapon.Weapon;
 
@@ -83,6 +84,7 @@ public class Entity {
     }
 
     public void setAction() {}
+
     public void speak() {
         if (dialogues[dialogueIndex] == null) {
             dialogueIndex = 0;
@@ -273,6 +275,8 @@ public class Entity {
         maxHp = vitality;
         if (weapon != null) {
             damage += weapon.damage;
+        } else {
+            weapon = new Hand(gamePanel);
         }
         if (breastplate != null) {
             defense += breastplate.protection;

@@ -1,6 +1,8 @@
 package rpg.game.item.weapon;
 
 import rpg.game.Direction;
+import rpg.game.item.Item;
+import rpg.game.item.ItemType;
 import rpg.game.main.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -9,18 +11,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Weapon {
+public class Weapon extends Item {
     public GamePanel gamePanel;
     public Rectangle attackArea = new Rectangle();
     public int damage = 5;
     public Direction attackDirection;
-    public String name;
-    public String description;
 
     public BufferedImage aUp0, aUp1, aUp2, aDown0, aDown1, aDown2, aLeft0, aLeft1, aLeft2, aRight0, aRight1, aRight2;
 
     public Weapon(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
+        itemType = ItemType.WEAPON;
     }
 
 

@@ -16,7 +16,7 @@ public class PinkSlime extends Mob {
         name = "Pink Slime";
         speed = 1;
         hp = 10;
-        maxHp = 20;
+        maxHp = 10;
         setImages("src/resources/enemy/slime/");
         setSolidArea();
     }

@@ -24,6 +24,7 @@ public class UI {
     public boolean hasActiveSlot;
     public boolean dragItem;
     public Item draggingItem;
+    public int draggingItemInventoryIndex;
 
     public UI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -489,11 +490,17 @@ public class UI {
         x += gamePanel.tileSize * 5.5;
         y = startY;
 
+
+        //WEAPON
         drawSlot(x, y, armorSlotSize);
+        if (gamePanel.player.weapon != null && !gamePanel.player.weapon.name.equals("Hand")) {
+            g2D.drawImage(gamePanel.player.weapon.icon, x, y, armorSlotSize, armorSlotSize, null);
+        }
         if (isActiveSlot(x, y, armorSlotSize)) {
             inventorySlotType = InventorySlotType.WEAPON;
         }
 
+        //NECKLACE
         y += armorSlotSize + 10;
         drawSlot(x, y, armorSlotSize);
         if (gamePanel.player.necklace != null) {
@@ -503,6 +510,8 @@ public class UI {
             inventorySlotType = InventorySlotType.NECKLACE;
         }
 
+
+        //RING
         y += armorSlotSize + 10;
         drawSlot(x, y, armorSlotSize);
         if (gamePanel.player.ring != null) {
@@ -527,12 +536,11 @@ public class UI {
                 slotCol = (x - invXStart) / (slotSize + 10);
                 slotRow = (y - invYStart) / (slotSize + 10);
             }
-            if (i < gamePanel.player.inventory.size()) {
-                Item item = gamePanel.player.inventory.get(i);
+                Item item = gamePanel.player.inventory[i];
                 if (item != null) {
                     g2D.drawImage(item.icon, x, y, slotSize, slotSize, null);
                 }
-            }
+
             x += slotSize + 10;
             if (col == 4) {
                 col = 0;
@@ -549,7 +557,7 @@ public class UI {
         drawInventoryDescription(x, y);
 
 
-        //DRAGGING ITE<=M
+        //DRAGGING ITEM
         if (dragItem) {
             drawDragItem(slotSize);
         }
@@ -578,9 +586,9 @@ public class UI {
             itemDescription = draggingItem.description;
         }
         else if (hasActiveSlot) {
-            if (getItemIndexOfSlot() < gamePanel.player.inventory.size() && inventorySlotType == InventorySlotType.INVENTORY) {
-                itemName = gamePanel.player.inventory.get(getItemIndexOfSlot()).name;
-                itemDescription = gamePanel.player.inventory.get(getItemIndexOfSlot()).description;
+            if (gamePanel.player.inventory[getItemIndexOfSlot()] != null && inventorySlotType == InventorySlotType.INVENTORY) {
+                itemName = gamePanel.player.inventory[getItemIndexOfSlot()].name;
+                itemDescription = gamePanel.player.inventory[getItemIndexOfSlot()].description;
             } else if (inventorySlotType == InventorySlotType.HELMET && gamePanel.player.helmet != null) {
                 itemName = gamePanel.player.helmet.name;
                 itemDescription = gamePanel.player.helmet.description;

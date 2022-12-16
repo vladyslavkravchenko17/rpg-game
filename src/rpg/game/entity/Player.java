@@ -5,11 +5,23 @@ import rpg.game.entity.magic.projectile.Fireball;
 import rpg.game.item.armor.bandit_set.BanditBoots;
 import rpg.game.item.armor.bandit_set.BanditBreastplate;
 import rpg.game.controls.KeyHandler;
+import rpg.game.item.armor.bandit_set.BanditGloves;
+import rpg.game.item.armor.bandit_set.BanditHelmet;
+import rpg.game.item.armor.drain_set.DrainBoots;
+import rpg.game.item.armor.drain_set.DrainBreastplate;
+import rpg.game.item.armor.drain_set.DrainGloves;
+import rpg.game.item.armor.drain_set.DrainHelmet;
 import rpg.game.item.armor.necklace.HealthNecklace;
+import rpg.game.item.armor.necklace.HelloKittyNecklace;
+import rpg.game.item.armor.ring.DrainRing;
 import rpg.game.item.armor.ring.RingOfStrength;
 import rpg.game.item.potion.LowHealthPotion;
+import rpg.game.item.potion.UltraMonsterWhite;
+import rpg.game.item.weapon.BadSword;
+import rpg.game.item.weapon.DrainBat;
 import rpg.game.main.GamePanel;
 import rpg.game.item.weapon.Hand;
+import rpg.game.main.UtilityTool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -45,7 +57,7 @@ public class Player extends Entity {
         nextLvlExp = 5;
         agility = 5;
         body = 1;
-        strength = 9;
+        strength = 5;
         vitality = 20;
         maxHp = vitality;
         hp = maxHp;
@@ -56,13 +68,26 @@ public class Player extends Entity {
 
         weapon = new Hand(gamePanel);
         magicSpell = new Fireball(gamePanel);
-        inventory.add(new BanditBreastplate());
-        inventory.add(new BanditBreastplate());
-        inventory.add(new BanditBoots());
-        inventory.add(new LowHealthPotion());
-        inventory.add(new LowHealthPotion());
-        inventory.add(new RingOfStrength());
-        inventory.add(new HealthNecklace());
+        inventory[0] = new BanditBreastplate();
+        inventory[1] = new BanditBreastplate();
+        inventory[2] = new BanditBoots();
+        inventory[3] = new LowHealthPotion();
+        inventory[4] = new LowHealthPotion();
+        inventory[5] = new RingOfStrength();
+        inventory[6] = new HealthNecklace();
+        inventory[7] = new BanditGloves();
+        inventory[8] = new BanditHelmet();
+        inventory[9] = new BadSword(gamePanel);
+        inventory[10] = new DrainBoots();
+        inventory[11] = new DrainGloves();
+        inventory[12] = new DrainBreastplate();
+        inventory[13] = new DrainRing();
+        inventory[14] = new HelloKittyNecklace();
+        inventory[15] = new DrainHelmet();
+        inventory[16] = new DrainBat(gamePanel);
+        inventory[17] = new UltraMonsterWhite();
+        inventory[18] = new UltraMonsterWhite();
+
 
         calculateStats();
     }
@@ -316,12 +341,12 @@ public class Player extends Entity {
         if (boots != null) {
             g2D.drawImage(bootsImage, screenX, screenY, null);
         }
-        if (gloves != null) {
-            g2D.drawImage(glovesImage, screenX, screenY, null);
-        }
-        if (helmet != null) {
-            g2D.drawImage(helmetImage, screenX, screenY, null);
-        }
+//        if (gloves != null) {
+//            g2D.drawImage(glovesImage, screenX, screenY, null);
+//        }
+//        if (helmet != null) {
+//            g2D.drawImage(helmetImage, screenX, screenY, null);
+//        }
         g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
     }
 

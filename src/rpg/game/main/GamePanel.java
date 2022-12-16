@@ -1,5 +1,6 @@
 package rpg.game.main;
 
+import rpg.game.UI.InventoryManager;
 import rpg.game.UI.UI;
 import rpg.game.controls.KeyHandler;
 import rpg.game.controls.MouseHandler;
@@ -65,6 +66,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final UI ui = new UI(this);
     public final EventHandler eventHandler = new EventHandler(this);
     public final Config config = new Config(this);
+    public final InventoryManager inventoryManager = new InventoryManager(this);
     public Thread gameThread;
 
     public final Player player = new Player(this, keyHandler);

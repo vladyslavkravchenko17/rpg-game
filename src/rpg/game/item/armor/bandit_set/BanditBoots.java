@@ -6,7 +6,7 @@ import rpg.game.item.armor.Boots;
 public class BanditBoots extends Boots {
     public BanditBoots() {
         setImages("src/resources/armor/bandit_armor/boots/");
-        protection = 1;
+        protection = 2;
         agility = 1;
         name = "Bandit Boots";
         description = "Light bandit boots";

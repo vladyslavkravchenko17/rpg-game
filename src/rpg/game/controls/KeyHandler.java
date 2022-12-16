@@ -135,85 +135,85 @@ public class KeyHandler implements KeyListener {
             gamePanel.sound.playSound(5);
             gamePanel.gameState = gamePanel.playState;
         }
-        if (code == KeyEvent.VK_W) {
-            gamePanel.sound.playSound(5);
-            if (gamePanel.ui.slotRow != 0) {
-                gamePanel.ui.slotRow--;
-            }
-        }
-        if (code == KeyEvent.VK_S) {
-            gamePanel.sound.playSound(5);
-            if (gamePanel.ui.slotRow != 3) {
-                gamePanel.ui.slotRow++;
-            }
-        }
-        if (code == KeyEvent.VK_A) {
-            gamePanel.sound.playSound(5);
-            if (gamePanel.ui.slotCol != 0) {
-                gamePanel.ui.slotCol--;
-            }
-        }
-        if (code == KeyEvent.VK_D) {
-            gamePanel.sound.playSound(5);
-            if (gamePanel.ui.slotCol != 4) {
-                gamePanel.ui.slotCol++;
-            }
-        }
-        if (code == KeyEvent.VK_ENTER) {
-            int itemIndex = gamePanel.ui.getItemIndexOfSlot();
-            if (itemIndex < gamePanel.player.inventory.size()) {
-                gamePanel.sound.playSound(5);
-                Item item = gamePanel.player.inventory.get(itemIndex);
-                if (item.itemType == ItemType.ARMOR) {
-                    if (((Armor) item).equipped) {
-                        if (((Armor) item).armorType == ArmorType.BOOTS) {
-                            gamePanel.player.boots = null;
-                        } else if (((Armor) item).armorType == ArmorType.BREASTPLATE) {
-                            gamePanel.player.breastplate = null;
-                        } else if (((Armor) item).armorType == ArmorType.HELMET) {
-                            gamePanel.player.helmet = null;
-                        } else if (((Armor) item).armorType == ArmorType.NECKLACE) {
-                            gamePanel.player.necklace = null;
-                        } else if (((Armor) item).armorType == ArmorType.RING) {
-                            gamePanel.player.ring = null;
-                        }
-                        ((Armor) item).equipped = false;
-                        gamePanel.player.calculateStats();
-                    } else {
-                        if (((Armor) item).armorType == ArmorType.BOOTS) {
-                            if (gamePanel.player.boots != null)
-                                gamePanel.player.boots.equipped = false;
-                            gamePanel.player.boots = ((Boots) item);
-                        } else if (((Armor) item).armorType == ArmorType.BREASTPLATE) {
-                            if (gamePanel.player.breastplate != null)
-                                gamePanel.player.breastplate.equipped = false;
-                            gamePanel.player.breastplate = ((Breastplate) item);
-                        } else if (((Armor) item).armorType == ArmorType.GLOVES) {
-                            if (gamePanel.player.gloves != null)
-                                gamePanel.player.gloves.equipped = false;
-                            gamePanel.player.gloves = ((Gloves) item);
-                        } else if (((Armor) item).armorType == ArmorType.HELMET) {
-                            if (gamePanel.player.helmet != null)
-                                gamePanel.player.helmet.equipped = false;
-                            gamePanel.player.helmet = ((Helmet) item);
-                        } else if (((Armor) item).armorType == ArmorType.NECKLACE) {
-                            if (gamePanel.player.necklace != null)
-                                gamePanel.player.necklace.equipped = false;
-                            gamePanel.player.necklace = ((Necklace) item);
-                        } else if (((Armor) item).armorType == ArmorType.RING) {
-                            if (gamePanel.player.ring != null)
-                                gamePanel.player.ring.equipped = false;
-                            gamePanel.player.ring = ((Ring) item);
-                        }
-                        ((Armor) item).equipped = true;
-                        gamePanel.player.calculateStats();
-                    }
-                } else if (item.itemType == ItemType.USABLE) {
-                    item.use(gamePanel);
-                    gamePanel.player.inventory.remove(itemIndex);
-                }
-            }
-        }
+//        if (code == KeyEvent.VK_W) {
+//            gamePanel.sound.playSound(5);
+//            if (gamePanel.ui.slotRow != 0) {
+//                gamePanel.ui.slotRow--;
+//            }
+//        }
+//        if (code == KeyEvent.VK_S) {
+//            gamePanel.sound.playSound(5);
+//            if (gamePanel.ui.slotRow != 3) {
+//                gamePanel.ui.slotRow++;
+//            }
+//        }
+//        if (code == KeyEvent.VK_A) {
+//            gamePanel.sound.playSound(5);
+//            if (gamePanel.ui.slotCol != 0) {
+//                gamePanel.ui.slotCol--;
+//            }
+//        }
+//        if (code == KeyEvent.VK_D) {
+//            gamePanel.sound.playSound(5);
+//            if (gamePanel.ui.slotCol != 4) {
+//                gamePanel.ui.slotCol++;
+//            }
+//        }
+//        if (code == KeyEvent.VK_ENTER) {
+//            int itemIndex = gamePanel.ui.getItemIndexOfSlot();
+//            if (itemIndex < gamePanel.player.inventory.size()) {
+//                gamePanel.sound.playSound(5);
+//                Item item = gamePanel.player.inventory.get(itemIndex);
+//                if (item.itemType == ItemType.ARMOR) {
+//                    if (((Armor) item).equipped) {
+//                        if (((Armor) item).armorType == ArmorType.BOOTS) {
+//                            gamePanel.player.boots = null;
+//                        } else if (((Armor) item).armorType == ArmorType.BREASTPLATE) {
+//                            gamePanel.player.breastplate = null;
+//                        } else if (((Armor) item).armorType == ArmorType.HELMET) {
+//                            gamePanel.player.helmet = null;
+//                        } else if (((Armor) item).armorType == ArmorType.NECKLACE) {
+//                            gamePanel.player.necklace = null;
+//                        } else if (((Armor) item).armorType == ArmorType.RING) {
+//                            gamePanel.player.ring = null;
+//                        }
+//                        ((Armor) item).equipped = false;
+//                        gamePanel.player.calculateStats();
+//                    } else {
+//                        if (((Armor) item).armorType == ArmorType.BOOTS) {
+//                            if (gamePanel.player.boots != null)
+//                                gamePanel.player.boots.equipped = false;
+//                            gamePanel.player.boots = ((Boots) item);
+//                        } else if (((Armor) item).armorType == ArmorType.BREASTPLATE) {
+//                            if (gamePanel.player.breastplate != null)
+//                                gamePanel.player.breastplate.equipped = false;
+//                            gamePanel.player.breastplate = ((Breastplate) item);
+//                        } else if (((Armor) item).armorType == ArmorType.GLOVES) {
+//                            if (gamePanel.player.gloves != null)
+//                                gamePanel.player.gloves.equipped = false;
+//                            gamePanel.player.gloves = ((Gloves) item);
+//                        } else if (((Armor) item).armorType == ArmorType.HELMET) {
+//                            if (gamePanel.player.helmet != null)
+//                                gamePanel.player.helmet.equipped = false;
+//                            gamePanel.player.helmet = ((Helmet) item);
+//                        } else if (((Armor) item).armorType == ArmorType.NECKLACE) {
+//                            if (gamePanel.player.necklace != null)
+//                                gamePanel.player.necklace.equipped = false;
+//                            gamePanel.player.necklace = ((Necklace) item);
+//                        } else if (((Armor) item).armorType == ArmorType.RING) {
+//                            if (gamePanel.player.ring != null)
+//                                gamePanel.player.ring.equipped = false;
+//                            gamePanel.player.ring = ((Ring) item);
+//                        }
+//                        ((Armor) item).equipped = true;
+//                        gamePanel.player.calculateStats();
+//                    }
+//                } else if (item.itemType == ItemType.USABLE) {
+//                    item.use(gamePanel);
+//                    gamePanel.player.inventory.remove(itemIndex);
+//                }
+//            }
+//        }
     }
 
     private void optionsState(int code) {
