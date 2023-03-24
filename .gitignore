@@ -1,2 +1,21 @@
-# Project exclude paths
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Compiled output
 /out/
+/build/
+/bin/
+
+# Dependencies
+/lib/
+/target/
+/.idea_modules/
+
+# Logs and backups
+/logs/
+*.log
+*.bak
+*.swp
